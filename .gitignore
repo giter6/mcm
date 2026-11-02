@@ -1,0 +1,36 @@
+# LaTeX build artefacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+main.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# local data (contest data must never be committed)
+data/
+code/data/
+*.zip
+*.7z
+
+# editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~

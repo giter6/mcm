@@ -1,0 +1,40 @@
+name: Archive
+
+# 每次 push 都把当前提交保存为不可变归档 ref：
+#   refs/archive/<分支名（/ 换成 __）>/<UTC 时间戳>-<sha7>
+# 即使之后 force-push、改分支名、删分支，旧版本仍可从这里恢复。
+# 恢复方法：git fetch origin '+refs/archive/*:refs/archive/*'
+#           python tools/mcm.py restore --list
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Push archive ref
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch="${GITHUB_REF_NAME}"
+          safe="${branch//\//__}"
+          ts="$(date -u +%Y%m%dT%H%M%SZ)"
+          short="$(git rev-parse --short=7 HEAD)"
+          ref="refs/archive/${safe}/${ts}-${short}"
+          echo "archive ref: ${ref}"
+          git push origin "HEAD:${ref}"

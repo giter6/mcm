@@ -1,0 +1,14 @@
+# 项目级配置：仓库管理员维护，成员不要随意修改。
+# 这里的信息会显示在 STATUS.md，并在 `python tools/mcm.py check --setup`
+# 时检查是否还有未替换的占位符。
+
+[project]
+contest = "MCM"                    # MCM 或 ICM
+year = 2026
+problem = "A"                      # 赛题（A–F）；赛前写 "unknown"
+team_control_number = "0000000"    # 官网注册后替换
+captain = "@your-github-name"      # 队长 GitHub 账号，替换
+repo = "your-org/mcm2026"          # 线上仓库地址，替换
+default_branch = "main"
+page_limit = 25                    # MCM/ICM 正文页数上限
+latex_engine = "pdflatex"          # pdflatex / xelatex

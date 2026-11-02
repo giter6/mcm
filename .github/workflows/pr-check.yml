@@ -1,0 +1,62 @@
+name: PR Check
+
+# PR 守门：
+#   * 分支类型与目标分支是否合法（part→hypo、release→main 等）
+#   * PR 描述五节是否填写完整
+#   * release PR 的提交版文件树是否正好是产品文件
+# 有 tools/mcm.py 的分支执行完整检查；main/release 裁剪后执行 .github/scripts 里的轻量检查。
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch base branch
+        shell: bash
+        run: |
+          git fetch --no-tags origin \
+            "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+        env:
+          BASE_REF: ${{ github.base_ref }}
+
+      - name: Check branch, PR body and files
+        shell: bash
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -euo pipefail
+          if [ -f tools/mcm.py ]; then
+            python tools/mcm.py pr-check
+          else
+            echo "::notice::管理文件已从 main/release 裁剪，使用内置轻量检查"
+            python .github/scripts/pr_check_min.py
+          fi
+
+      - name: Compile paper (dry run)
+        if: hashFiles('main.tex') != ''
+        uses: xu-cheng/latex-action@v3
+        continue-on-error: true
+        with:
+          root_file: main.tex

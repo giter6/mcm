@@ -1,0 +1,32 @@
+% =====================================================================
+% main.tex -- the ONLY root file of the paper.
+% Compile with:  latexmk -pdf main.tex
+% (pdflatex + bibtex + pdflatex + pdflatex; the CI also builds main.pdf)
+%
+% It inputs the four content files:
+%   abstract.tex       -> \summary{...} and \keywords{...} (Summary Sheet)
+%   paper_content.tex  -> body, split into PART blocks (front/p1/p2/p3/sens/...)
+%   appendix.tex       -> appendix
+%   ref.bib            -> references (must match every \cite in the text)
+% =====================================================================
+\documentclass{mcmthesis}
+
+% ----- contest information (fill in before submitting) -----
+\contest{MCM}       % MCM = problems A/B/C, ICM = problems D/E/F
+\problem{A}         % problem letter
+\team{0000000}      % team control number (do not publish it early)
+\title{Your Paper Title}
+
+\begin{document}
+
+\input{abstract}      % defines summary + keywords, no page output
+\maketitle            % MCM/ICM Summary Sheet = page 1
+
+\input{paper_content} % body
+\input{appendix}      % appendix
+
+% ----- references -----
+\bibliographystyle{plainnat}
+\bibliography{ref}
+
+\end{document}

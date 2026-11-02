@@ -1,0 +1,18 @@
+#!/bin/sh
+# commit-msg 钩子：校验提交信息格式（软校验，不阻断正确格式的正常工作）。
+# 安装：bash tools/install-hooks.sh
+# 手动校验：python tools/mcm.py check-commit .git/COMMIT_EDITMSG
+
+HOOK_DIR=$(cd "$(dirname "$0")" && pwd)
+ROOT=$(cd "$HOOK_DIR/../.." && pwd)
+
+if command -v python >/dev/null 2>&1; then
+  PY=python
+elif command -v python3 >/dev/null 2>&1; then
+  PY=python3
+else
+  echo "[mcm] 未找到 python，跳过提交信息校验" >&2
+  exit 0
+fi
+
+exec "$PY" "$ROOT/tools/mcm.py" check-commit "$1"

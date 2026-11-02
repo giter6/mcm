@@ -1,0 +1,85 @@
+% =====================================================================
+% paper_content.tex -- body of the paper.
+%
+% The file is split into PART blocks. Each block is owned by one part
+% branch, which keeps parallel writing conflict-free:
+%
+%   PART front : background, restatement, assumptions, notation
+%                -> branch part/hNN/front
+%   PART p1    : model, solution and results of Problem 1
+%                -> branch part/hNN/p1
+%   PART p2    : Problem 2                                    -> part/hNN/p2
+%   PART p3    : Problem 3                                    -> part/hNN/p3
+%   PART sens  : sensitivity analysis                         -> part/hNN/sens
+%   PART eval  : model evaluation, strengths/weaknesses, conclusion
+%                -> branch part/hNN/eval (optional)
+%
+% Merge order into the hypothesis branch (keeps conflicts low):
+%   front -> p1 -> p2 -> p3 -> sens -> eval -> misc (abstract, title, ...)
+%
+% Rules:
+%   1. Only edit the block you own; never reformat or reorder other blocks.
+%   2. Keep every result traceable: a number here must come from code
+%      under code/ and a figure under figures/ (see docs/latex.md).
+%   3. If a merge conflicts inside your block, keep your own version and
+%      take the other blocks unchanged.
+% =====================================================================
+
+% ===== PART front =====
+\section{Introduction and Problem Restatement}
+
+Describe the background and restate each sub-problem in your own words.
+Cite related work as needed, for example \citep{hyndman2018forecasting}
+and \citep{lecun2015deep}. Replace this placeholder text.
+
+\section{Model Assumptions}
+
+List the assumptions of the model, one item per assumption, each with a
+one-sentence justification.
+
+\section{Notation}
+
+Define the symbols that are reused in the following sections.
+
+% ===== PART p1 =====
+\section{Problem 1: Model and Solution}
+
+\subsection{Model Formulation}
+
+\subsection{Solution and Results}
+
+Present the model, the algorithm and the results of Problem 1 here.
+
+% ===== PART p2 =====
+\section{Problem 2: Model and Solution}
+
+\subsection{Model Formulation}
+
+\subsection{Solution and Results}
+
+Present the model, the algorithm and the results of Problem 2 here.
+
+% ===== PART p3 =====
+\section{Problem 3: Model and Solution}
+
+\subsection{Model Formulation}
+
+Present the model and the algorithm of Problem 3 here. If the model is an
+optimisation problem, state the objective and constraints explicitly and
+cite the solution method, for example \citep{bertsekas1999nonlinear}.
+
+\subsection{Solution and Results}
+
+Present the model, the algorithm and the results of Problem 3 here.
+
+% ===== PART sens =====
+\section{Sensitivity Analysis}
+
+Analyse how the results change with the key parameters, data and
+assumptions; report the ranges in which the conclusions stay valid.
+
+% ===== PART eval =====
+\section{Model Evaluation and Conclusion}
+
+Summarise strengths, weaknesses and possible extensions of the model, and
+give the final conclusion of the paper.
