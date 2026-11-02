@@ -29,7 +29,7 @@ bash tools/install-hooks.sh      # 安装提交信息校验钩子
 python tools/mcm.py check        # 环境自检
 ```
 
-> 提交信息规范：`type(scope): 说明`，type 取 `feat|fix|exp|paper|data|docs|release|chore`。
+> 提交信息规范：`type(scope): 说明`，type 取 `feat|fix|exp|paper|data|docs|release|chore|merge`。
 > 钩子只做软校验，钩子没装也能提交，但 CI 和日志仍会要求规范。
 
 ## 3. Settings → General

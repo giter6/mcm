@@ -186,7 +186,7 @@ python tools/mcm.py log "完成问题二初版" --why "验证假设是否成立"
 
 - `log` 会追加到 `journal/branches/<当前分支>.md`，并自动提交；
 - 在 `hypo/` 分支上还会同步更新 `hypo.toml` 的指标与状态；
-- 提交信息格式：`type(scope): 说明`，type 取 `feat|fix|exp|paper|data|docs|release|chore`，正文写「为什么/验证」。
+- 提交信息格式：`type(scope): 说明`，type 取 `feat|fix|exp|paper|data|docs|release|chore|merge`，正文写「为什么/验证」。
 
 ### S6 把 part 分支合回 hypo
 

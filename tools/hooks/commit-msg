@@ -15,4 +15,10 @@ else
   exit 0
 fi
 
+# 裁剪后的 release/main 分支没有 tools/，此时跳过校验（release 提交由工具 --no-verify 保证）
+if [ ! -f "$ROOT/tools/mcm.py" ]; then
+  echo "[mcm] 当前分支没有 tools/mcm.py（提交版分支），跳过提交信息校验" >&2
+  exit 0
+fi
+
 exec "$PY" "$ROOT/tools/mcm.py" check-commit "$1"

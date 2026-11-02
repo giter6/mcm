@@ -1065,7 +1065,7 @@ def check_forbidden_files(report: Report, files: list[str]) -> None:
 
 def check_commit_subjects(report: Report, base_ref: str, head_ref: str) -> None:
     proc = git("log", "--format=%s", f"{base_ref}..{head_ref}", check=False)
-    pattern = re.compile(r"^(feat|fix|exp|paper|data|docs|release|chore)(\([a-z0-9][a-z0-9._/-]*\))?!?: \S")
+    pattern = re.compile(r"^(feat|fix|exp|paper|data|docs|release|chore|merge)(\([a-z0-9][a-z0-9._/-]*\))?!?: \S")
     bad = [line for line in proc.stdout.splitlines() if line.strip() and not pattern.match(line)]
     for line in bad:
         report.warn(f"提交信息不符合规范（建议 type(scope): 说明）：{line}")
@@ -1177,6 +1177,7 @@ def cmd_release(args: argparse.Namespace) -> int:
             raise GitError(f"提交版文件树不符合要求：多余 {unexpected}，缺少 {missing_files}")
         git(
             "commit",
+            "--no-verify",
             "-m",
             f"release({slug}): 生成提交版论文树",
             "-m",
@@ -1277,7 +1278,7 @@ def cmd_restore(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 # check-commit（本地钩子）
 # ---------------------------------------------------------------------------
-COMMIT_TYPES = "feat|fix|exp|paper|data|docs|release|chore"
+COMMIT_TYPES = "feat|fix|exp|paper|data|docs|release|chore|merge"
 COMMIT_RE = re.compile(rf"^({COMMIT_TYPES})(\([a-z0-9][a-z0-9._/-]*\))?!?: \S")
 
 
