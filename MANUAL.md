@@ -244,7 +244,12 @@ python tools/mcm.py release v1
    git tag -a submit-2026-A-v1 -m "2026 MCM Problem A 提交版 v1"
    git push origin submit-2026-A-v1
    ```
-3. 在 `journal/team.md` 记录提交（时间/账号/结果）。
+3. 归档：切回假设分支（main 裁剪后没有 `tools/`），对 main 打一个快照：
+   ```bash
+   git switch hypo/h01-arima-residual
+   python tools/mcm.py snapshot --branch main --name submitted-v1
+   ```
+4. 在 `journal/team.md` 记录提交（时间/账号/结果）。
 
 ### S10 冻结期（最后 8–12 小时）
 
@@ -267,7 +272,9 @@ python tools/mcm.py restore --ref 20261102T031500        # 唯一匹配片段
 
 - 每次 push 都会自动归档（含 force-push 之前的版本）；
 - `restore` 会新建 `fix/restore-<sha7>` 分支，不会覆盖你当前工作；
-- 想回到某个旧版本看内容：`git show <归档sha>:paper_content.tex`。
+- 想回到某个旧版本看内容：`git show <归档sha>:paper_content.tex`；
+- **`main` 裁剪后没有 `tools/`**，所以给 main 打快照要在任意管理分支（hypo/part/wip）上执行
+  `python tools/mcm.py snapshot --branch main --name submitted`；一般每次合并 release 后立刻做一次。
 
 ### S12 全队日常检查
 

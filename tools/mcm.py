@@ -1203,7 +1203,8 @@ def cmd_release(args: argparse.Namespace) -> int:
     print(f"  3. 合并后在 main 上打提交标签：")
     print(f"     git tag -a {tag} -m \"MCM/ICM {year} Problem {problem} 提交版 {slug}\"")
     print(f"     git push origin {tag}")
-    print("  4. 提交完成后运行 mcm.py snapshot 并归档到赛后仓库")
+    print("  4. 提交完成后在假设分支上运行归档（main 裁剪后没有 tools）：")
+    print(f"     python tools/mcm.py snapshot --branch main --name submitted-{tag}")
     if remote_exists() and not args.no_push:
         git("push", "-u", "origin", branch_out)
         info(f"已推送 {branch_out}")
@@ -1227,13 +1228,17 @@ def cmd_snapshot(args: argparse.Namespace) -> int:
     require_repo()
     branch = args.branch or current_branch()
     if branch == "HEAD":
-        raise GitError("detached HEAD 请用 --branch 指定名字")
-    sha = git("rev-parse", "--short=7", "HEAD").stdout.strip()
+        raise GitError("detached HEAD 请用 --branch 指定分支名")
+    target = args.branch or "HEAD"
+    try:
+        sha = git("rev-parse", "--short=7", target).stdout.strip()
+    except GitError:
+        raise GitError(f"找不到要快照的分支/提交：{target}")
     stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     name = f"-{safe_name(args.name)}" if args.name else ""
     ref = f"refs/archive/{safe_name(branch)}/{stamp}{name}-{sha}"
-    git("update-ref", ref, "HEAD")
-    info(f"本地快照：{ref}")
+    git("update-ref", ref, target)
+    info(f"本地快照：{ref}（{branch} @ {sha}）")
     if remote_exists() and not args.no_push:
         git("push", "origin", ref)
         info("已推送到远端（GitHub 上作为不可变归档保留）")
@@ -1372,9 +1377,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-push", action="store_true", help="不自动 push")
     p.set_defaults(func=cmd_release)
 
-    p = sub.add_parser("snapshot", help="给当前提交打不可变归档快照 refs/archive/...")
+    p = sub.add_parser("snapshot", help="给指定提交打不可变归档快照 refs/archive/...")
     p.add_argument("--name", default="", help="快照名（可选）")
-    p.add_argument("--branch", default="", help="记录用的分支名（默认当前分支）")
+    p.add_argument("--branch", default="", help="要快照的分支（默认当前分支；裁剪后的 main 可在其他分支上用它）")
     p.add_argument("--no-push", action="store_true", help="不推送远端")
     p.set_defaults(func=cmd_snapshot)
 
