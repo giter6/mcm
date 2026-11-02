@@ -50,7 +50,7 @@ mcm-template/
 bash tools/install-hooks.sh
 
 # 1. 开一条假设分支（自动编号、建卡片、写日志、推送）
-python tools/mcm.py new-hypo --title "ARIMA 残差修正" --slug arima-residual --owner 张三
+python tools/mcm.py new-hypo --title "ARIMA 残差修正" --slug arima-residual --owner @zhangsan
 
 # 2. 在这条假设里开一个子任务分支（例如写问题一）
 python tools/mcm.py new-part p1

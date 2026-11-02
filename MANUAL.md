@@ -69,7 +69,7 @@ latexmk -pdf main.tex          # 能生成 main.pdf 即正常
 #   code/  figures/  journal/  docs/
 
 # ⑥ 走一遍最小流程：开一条试验假设 → 开 part 分支 → 记日志 → 删掉
-python tools/mcm.py new-hypo --title "试验假设" --slug test --owner 张三
+python tools/mcm.py new-hypo --title "试验假设" --slug test --owner @zhangsan
 python tools/mcm.py new-part p1
 python tools/mcm.py log "跑通示例代码" --metric rmse=3.21
 # 确认无误后删除试验分支（远程 + 本地）
@@ -132,7 +132,7 @@ code/  figures/  fonts/
 ### S1 开一条新假设
 
 ```bash
-python tools/mcm.py new-hypo --title "ARIMA 残差修正" --slug arima-residual --owner 张三
+python tools/mcm.py new-hypo --title "ARIMA 残差修正" --slug arima-residual --owner @zhangsan
 # 等价手动：
 #   git switch main && git pull --rebase
 #   git switch -c hypo/h01-arima-residual
@@ -389,7 +389,7 @@ git status                         # 工作区干净
 bash tools/install-hooks.sh                # 安装提交钩子（一次）
 python tools/mcm.py check                  # 提交前自检
 python tools/mcm.py check --setup          # 赛前占位符检查
-python tools/mcm.py new-hypo --title "..." --slug xxx --owner 张三
+python tools/mcm.py new-hypo --title "..." --slug xxx --owner @zhangsan
 python tools/mcm.py new-part p1            # 在 hypo 分支上执行
 python tools/mcm.py new-fix --slug b001-xxx --base <分支>
 python tools/mcm.py log "做了什么" --why "..." --result "..." --metric rmse=3.21
