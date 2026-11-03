@@ -1,32 +1,80 @@
 % =====================================================================
 % main.tex -- the ONLY root file of the paper.
 % Compile with:  latexmk -pdf main.tex
-% (pdflatex + bibtex + pdflatex + pdflatex; the CI also builds main.pdf)
+% (pdflatex + bibtex + pdflatex + pdflatex; CI also builds main.pdf)
 %
-% It inputs the four content files:
-%   abstract.tex       -> \summary{...} and \keywords{...} (Summary Sheet)
+% Paper class: mcmthesis v6.3.3, the community-standard MCM/ICM class
+% (CTAN: https://ctan.org/pkg/mcmthesis, LPPL 1.3c or later).
+% The class provides:
+%   * the official-style three-column Summary Sheet (page 1),
+%   * the required page header "Team # <tcn>  Page <n> of <N>",
+%   * the Report on Use of AI environment required by COMAP,
+%   * 12pt letter-paper layout.
+% It is the only .cls file in this repository and is compiled as-is;
+% do not edit it, so every hypothesis/release builds the same layout.
+%
+% It inputs the content files:
+%   abstract.tex       -> Summary Sheet text + keywords
 %   paper_content.tex  -> body, split into PART blocks (front/p1/p2/p3/sens/...)
-%   appendix.tex       -> appendix
+%   appendix.tex       -> appendix + Report on Use of AI
 %   ref.bib            -> references (must match every \cite in the text)
 % =====================================================================
 \documentclass{mcmthesis}
 
 % ----- contest information (fill in before submitting) -----
-\contest{MCM}       % MCM = problems A/B/C, ICM = problems D/E/F
-\problem{A}         % problem letter
-\team{0000000}      % team control number (do not publish it early)
+% problem = the problem letter chosen (A/B/C for MCM, D/E/F for ICM)
+% tcn     = team control number; keep it private before the contest ends
+\mcmsetup{
+  CTeX            = false,
+  tstyle          = \color{red}\bfseries,
+  tcn             = 0000000,
+  problem         = A,
+  sheet           = true,   % build the Summary Sheet as page 1
+  titleinsheet    = true,   % print the title on the Summary Sheet
+  keywordsinsheet = true,   % print the keywords on the Summary Sheet
+  titlepage       = false,  % no separate title page
+  abstract        = true,
+}
+
+\usepackage{txfonts}        % Times-style fonts (same as the upstream demo; 12pt is set by the class)
+\usepackage[numbers,sort&compress]{natbib}  % \citep / \citet, numeric [1] style
+\setlength{\headheight}{15pt}               % silence fancyhdr head-height warning
+
 \title{Your Paper Title}
+\author{}                   % keep empty: COMAP forbids team/school/advisor names
+\date{\today}
+
+% Figure helper: keeps the figure -> script -> paper mapping visible in the
+% source (see figures/README.md). Usage:
+%   \mcmfigure{figures/q1/fig_q1_xxx.pdf}{Caption text}{fig:q1-xxx}
+\newcommand{\mcmfigure}[4][htbp]{%
+  \begin{figure}[#1]
+    \centering
+    \includegraphics[width=\linewidth]{#2}
+    \caption{#3}
+    \label{#4}
+  \end{figure}%
+}
 
 \begin{document}
 
-\input{abstract}      % defines summary + keywords, no page output
-\maketitle            % MCM/ICM Summary Sheet = page 1
+% Summary Sheet content: captured by the class and printed by \maketitle.
+\begin{abstract}
+\input{abstract}
+\end{abstract}
 
-\input{paper_content} % body
-\input{appendix}      % appendix
+\maketitle                  % MCM/ICM Summary Sheet = page 1
 
-% ----- references -----
-\bibliographystyle{plainnat}
+\tableofcontents            % optional; every page counts toward the 25-page limit
+\newpage
+
+\input{paper_content}       % body
+
+% ----- references (count toward the 25-page limit) -----
+\bibliographystyle{plain}
 \bibliography{ref}
+
+% ----- appendix: appendices + Report on Use of AI (not counted if after 25 pages) -----
+\input{appendix}
 
 \end{document}

@@ -1,10 +1,12 @@
 % =====================================================================
-% abstract.tex -- content of the MCM/ICM Summary Sheet (page 1).
+% abstract.tex -- text of the MCM/ICM Summary Sheet (page 1).
 %
-% It defines two commands used by \maketitle:
-%   \summary{...}   one or two paragraphs: background -> methods -> key
-%                   numeric results for each sub-problem -> conclusion
-%   \keywords{...}  3-6 keywords, comma separated
+% This file is \input inside the class's abstract environment, so write
+% plain paragraphs and finish with a keywords environment:
+%
+%   paragraph 1: background -> task -> method/assumption per problem
+%   paragraph 2: key numeric results for each sub-problem -> conclusion
+%   keywords:    3-6 keywords, separated by semicolons or commas
 %
 % Ownership: normally maintained by the part/hNN/misc branch, because the
 % summary integrates all problems. It must be written/updated LAST, after
@@ -12,17 +14,18 @@
 %
 % Style rules: no formulas, no citations, no undefined abbreviations, and
 % every claim must be backed by a number that also appears in the body.
+% Judges read this page first, so it decides first impressions.
 % =====================================================================
 
-\summary{%
 Write one to two paragraphs here. Start with the background and the task.
 Then, for each sub-problem, state the model or method used and the key
 result (with concrete numbers). Close with the main conclusion and, if
 relevant, one sentence on sensitivity/robustness. Replace every sentence
-of this placeholder before submitting; the judges read this page first.
+of this placeholder before submitting.
 
 A second paragraph can describe the validation of the model and the
 practical implication of the results.
-}
 
-\keywords{keyword one, keyword two, keyword three, keyword four}
+\begin{keywords}
+keyword one; keyword two; keyword three; keyword four
+\end{keywords}

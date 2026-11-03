@@ -62,7 +62,7 @@ bash tools/install-hooks.sh
 
 # ④ 环境自检 + 编译论文
 python tools/mcm.py check
-latexmk -pdf main.tex          # 能生成 main.pdf 即正常
+latexmk -pdf main.tex          # 能生成 main.pdf、第 1 页是三栏 Summary Sheet 即正常
 
 # ⑤ 认识目录
 #   main.tex / abstract.tex / paper_content.tex / appendix.tex / ref.bib
@@ -298,8 +298,9 @@ git status                         # 工作区干净
 | 问题一/二/三的模型、求解、结果 | 各自的 `p1/p2/p3` 块 | 各问题负责人 |
 | 灵敏度分析 | `sens` 块 | 指定的成员 |
 | 模型评价、推广、结论 | `eval` 块 | 整合人 |
-| 摘要、标题、关键词、零散写作 | `abstract.tex`、`misc` 块 | 整合人最后写 |
+| 摘要、标题、关键词、零散写作 | `abstract.tex`（摘要+keywords）、`misc` 块 | 整合人最后写 |
 | 详细推导、补充表格、代码说明 | `appendix.tex` 按问题注释分块 | 各问题负责人 |
+| AI 使用声明（正文引用 + 25 页后报告） | `appendix.tex` 的 `ReportAiUse`（正文用 `\AIcite`） | 整合人/实际用 AI 的人 |
 | 参考文献 | `ref.bib` | 谁引用谁加 |
 
 ### 6.2 合并顺序与冲突处理
@@ -338,8 +339,9 @@ git status                         # 工作区干净
 ## 8. 冻结与提交清单
 
 - [ ] `main` 最新，`python tools/mcm.py check` 通过
-- [ ] `latexmk -pdf main.tex` 无 Error，页数符合当年规则
-- [ ] Summary Sheet 数字与正文一致，队号/题目正确
+- [ ] `latexmk -pdf main.tex` 无 Error，**总页数（Summary Sheet 到附录，含目录/参考文献）≤ 25**，AI 报告在 25 页之后不计
+- [ ] Summary Sheet 数字与正文一致，`\mcmsetup` 的队号/题号正确
+- [ ] AI 使用声明已写：正文有 `\AIcite`、25 页后有 `Report on Use of AI`（未使用 AI 也要写一句）
 - [ ] 所有图都能由 `code/` 复现，`figures/README.md` 已更新
 - [ ] 所有 `\cite` 都能在 `ref.bib` 找到，无未引用条目（警告可接受）
 - [ ] `release` 生成并合并进 main，打了 `submit-...` tag

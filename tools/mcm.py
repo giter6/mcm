@@ -733,6 +733,27 @@ def check_product_files(report: Report) -> None:
         main = read_text(ROOT / "main.tex")
         for part in ("abstract", "paper_content", "appendix"):
             report.check(f"\\input{{{part}}}" in main, f"main.tex 引入 {part}.tex")
+        # 社区标准 mcmthesis v6 的结构与美赛合规项
+        report.check("\\documentclass{mcmthesis}" in main, "main.tex 使用社区标准 mcmthesis 文档类")
+        report.check("\\mcmsetup" in main, "main.tex 用 \\mcmsetup 配置队号/题号（Summary Sheet）")
+        report.check("\\begin{abstract}" in main and "\\maketitle" in main,
+                     "main.tex 用 abstract 环境 + \\maketitle 生成三栏 Summary Sheet")
+        report.check("\\bibliography{ref}" in main, "main.tex 引用 ref.bib 生成参考文献")
+        author = re.search(r"\\author\{([^}]*)\}", main)
+        report.check(not (author and author.group(1).strip()),
+                     "main.tex 的 \\author 为空（美赛禁止出现队员/学校姓名）")
+    cls = ROOT / "mcmthesis.cls"
+    if cls.is_file():
+        cls_text = read_text(cls)
+        report.check("ProvidesClass{mcmthesis}" in cls_text or "mcmthesis" in cls_text,
+                     "mcmthesis.cls 为社区标准类文件")
+        report.check("v6.3.3" in cls_text or "The Thesis Template Designed For MCM/ICM" in cls_text,
+                     "mcmthesis.cls 版本为 v6.3.3（CTAN 社区标准）")
+    appendix = ROOT / "appendix.tex"
+    if appendix.is_file():
+        app = read_text(appendix)
+        report.check("\\AImatter" in app, "appendix.tex 用 \\AImatter 标记 25 页界（AI 报告不计页数）")
+        report.check("ReportAiUse" in app, "appendix.tex 含 Report on Use of AI 声明节")
 
 
 def check_parts(report: Report) -> None:
@@ -753,12 +774,30 @@ def tex_files() -> list[Path]:
     return sorted(p for p in ROOT.glob("*.tex") if p.is_file())
 
 
+def strip_tex_comments(text: str) -> str:
+    """去掉 LaTeX 注释（保留转义百分号 \\%），避免把示例命令当成真实引用。"""
+    lines = []
+    for line in text.splitlines():
+        out: list[str] = []
+        i = 0
+        while i < len(line):
+            ch = line[i]
+            if ch == "%" and (i == 0 or line[i - 1] != "\\"):
+                break
+            out.append(ch)
+            i += 1
+        lines.append("".join(out))
+    return "\n".join(lines)
+
+
 def check_figures(report: Report) -> None:
     referenced: set[str] = set()
     for tex in tex_files():
-        text = read_text(tex)
+        text = strip_tex_comments(read_text(tex))
         for match in re.finditer(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", text):
             raw = match.group(1).strip()
+            if raw.startswith("#"):  # 宏定义中的参数占位
+                continue
             candidate = ROOT / raw
             if not candidate.suffix:
                 for suffix in (".pdf", ".png", ".jpg", ".jpeg"):
@@ -767,6 +806,13 @@ def check_figures(report: Report) -> None:
                         break
             rel = candidate.relative_to(ROOT).as_posix()
             report.check(candidate.is_file(), f"图文件存在：{rel}")
+            referenced.add(rel)
+        # main.tex 定义的 \mcmfigure{路径}{caption}{label}（可带可选位置参数）
+        for match in re.finditer(r"\\mcmfigure(?:\[[^\]]*\])?\{([^}]+)\}", text):
+            raw = match.group(1).strip()
+            candidate = ROOT / raw
+            rel = candidate.relative_to(ROOT).as_posix()
+            report.check(candidate.is_file(), f"图文件存在（\\mcmfigure）：{rel}")
             referenced.add(rel)
 
     fig_root = ROOT / "figures"
@@ -940,11 +986,20 @@ def check_placeholders(report: Report) -> None:
         if not text or text in ("0000000", "unknown") or text.startswith("@your") or text.startswith("your-org"):
             report.warn(f"project.toml 的 {key} 还是占位符：{text!r}")
     main = ROOT / "main.tex"
-    if main.is_file() and "Your Paper Title" in read_text(main):
-        report.warn("main.tex 标题还是占位符 Your Paper Title")
+    if main.is_file():
+        main_text = read_text(main)
+        if "Your Paper Title" in main_text:
+            report.warn("main.tex 标题还是占位符 Your Paper Title")
+        if re.search(r"tcn\s*=\s*0{7}", main_text):
+            report.warn("main.tex 的 \\mcmsetup tcn 还是占位队号 0000000")
+        if re.search(r"problem\s*=\s*[A-F]\b", main_text) and str(project.get("problem")) in ("", "unknown"):
+            report.warn("project.toml 的 problem 还是 unknown（选题后填 A-F）")
     abstract = ROOT / "abstract.tex"
     if abstract.is_file() and "Write one to two paragraphs here" in read_text(abstract):
         report.warn("abstract.tex 摘要还是占位文本（最后一步必须重写）")
+    appendix = ROOT / "appendix.tex"
+    if appendix.is_file() and "Describe here every AI tool you used" in read_text(appendix):
+        report.warn("appendix.tex 的 Report on Use of AI 还是占位文本（无 AI 使用也需写一句声明）")
     figures_readme = ROOT / "figures" / "README.md"
     if figures_readme.is_file() and "fig_q1_xxx.pdf" in read_text(figures_readme):
         report.warn("figures/README.md 对应关系表还是示例行，请替换为真实图")

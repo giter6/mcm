@@ -18,9 +18,9 @@ mcm-template/
 ├── main.tex                # 总入口，只负责 \input 各部分
 ├── abstract.tex            # Summary Sheet 的摘要与关键词（最后写）
 ├── paper_content.tex       # 正文，按 PART 分成 front/p1/p2/p3/sens/eval
-├── appendix.tex            # 附录
+├── appendix.tex            # 附录 + 25 页之后的 AI 使用报告
 ├── ref.bib                 # 全部参考文献
-├── mcmthesis.cls           # 论文模板类
+├── mcmthesis.cls           # 社区标准类 v6.3.3（CTAN/LPPL，不建议改）
 ├── code/                   # q1/ q2/ q3/ sensitivity/ 与 results/
 ├── figures/                # q1/ q2/ q3/ sensitivity/，与 code 一一对应
 ├── fonts/                  # 需要特殊字体时才放
@@ -79,8 +79,8 @@ python tools/mcm.py status --write
 ## 把模板变成你的比赛仓库
 
 1. GitHub 上点 **Use this template** 建私有仓库（或直接 push 本仓库）；
-2. 替换占位符：`project.toml`、`main.tex` 的 `\team`/`\contest`/`\problem`/`\title`；用
-   `python tools/mcm.py check --setup` 列出所有待替换项；
+2. 替换占位符：`project.toml`、`main.tex` 的 `\mcmsetup`（`tcn` 队号 / `problem` 题号）与 `\title`、
+   `abstract.tex` 摘要与关键词、`appendix.tex` 的 AI 使用声明；用 `python tools/mcm.py check --setup` 列出所有待替换项；
 3. 按 [docs/github-setup.md](docs/github-setup.md) 打开 Actions 写权限、给 `main` 配保护规则。
 
 ## 文档地图

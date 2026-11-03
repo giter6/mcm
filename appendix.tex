@@ -1,14 +1,37 @@
 % =====================================================================
-% appendix.tex -- appendix (code list, extra tables, long derivations).
+% appendix.tex -- appendix + Report on Use of AI.
 %
+% Part A: appendices (code listings, extra tables, long derivations).
 % Ownership: part/hNN/misc by default; a problem branch may append its own
 % appendix material but must not rewrite the others' parts.
+%
+% Part B: Report on Use of AI (COMAP rule since 2027). It starts with
+% \AImatter, which marks the solution's last page (so the page header says
+% "Page X of Y" up to here) and switches the header to plain page numbers
+% for the AI report. COMAP does not count this report toward the 25-page
+% limit, but it must be appended after the solution, references and
+% appendices. Describe every AI tool used (name + version, exact query,
+% summary of its output, where the output was used), each as a \bibitem,
+% and cite it in the body with \AIcite{...}.
 % =====================================================================
-\appendix
+\begin{appendices}
 
 \section{Supporting Information}
 \label{app:si}
 
 Put code listings, extra tables, long derivations or additional figures
-here. Keep the main body within the 25-page limit of MCM/ICM; material
-that supports reproducibility can go in this appendix.
+here. These pages count toward the 25-page limit of MCM/ICM.
+
+\end{appendices}
+
+\AImatter
+
+\begin{ReportAiUse}{9}
+\bibitem{AI1}
+Describe here every AI tool you used, following the official format:
+tool name and version; the exact query you gave it; a summary of its
+output; and where (which problem / which part of the paper) you used it.
+If no generative AI tool was used, replace this entry with one sentence
+saying so (or remove the entry and change the argument of ReportAiUse
+from 9 to 0).
+\end{ReportAiUse}
